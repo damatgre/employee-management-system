@@ -11,7 +11,7 @@ db.connect(err => {
   init();
 });
 
-function init () {
+function init() {
   inquirer.prompt([
     {
       type: 'list',
@@ -29,20 +29,49 @@ function init () {
     }
   ]).then(answers => {
 
-    switch(answers.menuChoices){
+    switch (answers.menuChoices) {
+
       case "View all departments":
-      viewAllDepartments();
-      break;
+        viewAllDepartments();
+        break;
+
+      case "View all roles":
+        viewAllRoles();
+        break;
+
+        case "View all employees":
+        viewAllEmployees();
+        break;
     }
   })
 }
 
-function viewAllDepartments(){
-    db.query('SELECT * FROM department', (err, res) => {
-        if (err) {
-            throw err;
-        } else {
-          console.table(res);
-        }
-    });
-}
+function viewAllDepartments() {
+  db.query('SELECT * FROM department', (err, res) => {
+    if (err) {
+      throw err;
+    }
+    console.table(res);
+    init();
+  });
+};
+
+function viewAllRoles() {
+  db.query('SELECT * FROM roles', (err, res) => {
+    if (err) {
+      throw err;
+    }
+    console.table(res);
+    init();
+  });
+};
+
+function viewAllEmployees() {
+  db.query('SELECT * FROM employee', (err, res) => {
+    if (err) {
+      throw err;
+    }
+    console.table(res);
+    init();
+  });
+};
