@@ -1,14 +1,14 @@
 var inquirer = require('inquirer');
 const cTable = require('console.table');
 const db = require('./db/connection');
-const funk = require('./orm');
 
 
-// Start server after DB connection
+
+// Start server after DB connection and begin prompts
 db.connect(err => {
-  if (err) throw err;
-  console.log('Database connected.');
-
+  if (err) throw err
+  console.log('Database connected.')
+  init();
 });
 
 function init () {
@@ -27,6 +27,22 @@ function init () {
         'Update an employee role'
       ]
     }
-  ])
+  ]).then(answers => {
+
+    switch(answers.menuChoices){
+      case "View all departments":
+      viewAllDepartments();
+      break;
+    }
+  })
 }
 
+function viewAllDepartments(){
+    db.query('SELECT * FROM department', (err, res) => {
+        if (err) {
+            throw err;
+        } else {
+          console.table(res);
+        }
+    });
+}
