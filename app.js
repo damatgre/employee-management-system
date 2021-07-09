@@ -2,6 +2,10 @@ var inquirer = require('inquirer');
 const cTable = require('console.table');
 const db = require('./db/connection');
 
+let roles;
+let departments;
+let managers;
+let employees;
 
 
 // Start server after DB connection and begin prompts
@@ -9,6 +13,9 @@ db.connect(err => {
   if (err) throw err
   console.log('Database connected.')
   init();
+  //need to run these first so that they query data base upon connection
+  getRoles();
+  getManagers();
 });
 
 function init() {
@@ -52,7 +59,7 @@ function init() {
         addRole();
         break;
 
-        case "Add an employee":
+      case "Add an employee":
         addEmployee();
         break;
     }
@@ -150,7 +157,7 @@ addRole = () => {
       choices: names
     }
   ]).then(answers => {
-    console.log(answers);
+    //console.log(answers);
     //running through names array to get index
     for (i = 0; i < names.length; i++) {
       //using index to get ID in ID array
@@ -166,54 +173,83 @@ addRole = () => {
   })
 };
 
+getRoles = () => {
+  db.query("SELECT id, title FROM roles", (err, res) => {
+    if (err) throw err;
+    roles = res;
+    //console.table(roles);
+  })
+};
+
+getManagers = () => {
+  db.query("SELECT id, first_name, last_name, CONCAT_WS(' ', first_name, last_name) AS managers FROM employee", (err, res) => {
+    if (err) throw err;
+    managers = res;
+    //console.table(managers);
+  })
+};
+
 addEmployee = () => {
 
-  roleTitle = [];
-  roleId = [];
-  db.query(`SELECT * FROM roles`,  (err, res) => {
-    //console.log(res);
-    for (i = 0; i < res.length; i++) {
-      roleTitle.push(res[i].title);
-      roleId.push(res[i].id);
-    }
-    console.log(roleTitle);
-    console.log(roleId);
-  })
-  
-  manager = [];
-  managerId = [];
-  db.query(`SELECT * FROM employee`, (err, res) => {
-    //console.log(res);
-    for (i = 0; i < res.length; i++) {
-      manager.push(res[i].first_name);
-      managerId.push(res[i].id);
-    }
-    console.log(manager);
-    console.log(managerId);
-  })
+  getRoles();
+  getManagers();
 
-  // inquirer.prompt([
-  //   {
-  //     type: 'input',
-  //     name: 'firstName',
-  //     message: 'What is the first name of the new employee?',
-  //   },
-  //   {
-  //     type: 'input',
-  //     name: 'lastName',
-  //     message: 'What is the last name of the new employee?',
-  //   },
-  //   {
-  //     type: 'list',
-  //     name: 'roleSelect',
-  //     message: 'What is the role of the new employee?',
-  //     choices: roleTitle
-  //   },
-  //   {
-  //     type: 'list',
-  //     name: 'managerSelect',
-  //     message: 'Who is the manager of the new employee?',
-  //     choices: names
-  //   }
-  // ])
+  let roleChoice = [];
+  let roleId = [];
+  for (i = 0; i < roles.length; i++) {
+    roleChoice.push(roles[i].title)
+    roleId.push(roles[i].id);
+  }
+
+  let managerChoice = [];
+  let managerId = [];
+  for (i = 0; i < managers.length; i++) {
+    managerChoice.push(managers[i].first_name)
+    managerId.push(managers[i].id);
+  }
+
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'firstName',
+      message: 'What is the first name of the new employee?',
+    },
+    {
+      type: 'input',
+      name: 'lastName',
+      message: 'What is the last name of the new employee?',
+    },
+    {
+      type: 'list',
+      name: 'roleEmp',
+      message: 'What is the role of the new employee?',
+      choices: roleChoice
+    },
+    {
+      type: 'list',
+      name: 'managerEmp',
+      message: 'Who is the manager of the new employee?',
+      choices: managerChoice
+    }
+  ]).then(answer => {
+    console.log(answer)
+    for (i = 0; i < roleChoice.length; i++) {
+      if (roleChoice[i] === answer.roleEmp) {
+        console.log(roleId[i])
+      }
+    }
+
+    for (i = 0; i < managerChoice.length; i++) {
+      if (managerChoice[i] === answer.managerEmp) {
+        console.log(managerId[i])
+      }
+    }
+
+    db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.firstName}', '${answer.lastName}', '${roleId[i]}', '${managerId[i]})`, (err, res) => {
+
+      console.log(`You successfully added ${answer.firstName} ${answer.lastName}`)
+      viewAllEmployees();
+    }
+    )
+  })
 }
