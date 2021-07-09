@@ -27,6 +27,7 @@ function init() {
         'Update an employee role'
       ]
     }
+
   ]).then(answers => {
 
     switch (answers.menuChoices) {
@@ -39,8 +40,16 @@ function init() {
         viewAllRoles();
         break;
 
-        case "View all employees":
+      case "View all employees":
         viewAllEmployees();
+        break;
+
+      case "Add a department":
+        addDepartment();
+        break;
+
+      case "Add a role":
+        addRole();
         break;
     }
   })
@@ -75,3 +84,35 @@ function viewAllEmployees() {
     init();
   });
 };
+
+function addDepartment() {
+
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'deptName',
+      message: 'What is the name of the new department?',
+    }
+  ]).then(answer => {
+    db.query(`INSERT INTO department (name) VALUES ('${answer.deptName}')`, (err, res) => {
+      if (err) throw err;
+      console.log("1 new department added: " + answer.deptName);
+      viewAllDepartments();
+      init();
+    })
+  })
+};
+//     db.query(`INSERT INTO department SET ?`,
+//       {
+//         name: answer.deptName
+//       }, (err, res) => {
+//         if (err) {
+//           throw err;
+//         }
+//         console.log(`You successfully added ${answer.deptName} to the departments!`, res);
+//         init();
+//       });
+//   })
+// };
+
+
