@@ -115,17 +115,19 @@ addDepartment = () => {
 //   })
 // };
 
-addRole =() => {
+addRole = () => {
 
   let names = [];
+  let deptID = [];
   db.query(`SELECT * FROM department`, (err, res) => {
     //console.log(res);
-    for(i = 0; i < res.length; i++){
-      names.push(res[i].name)
-    }  
+    for (i = 0; i < res.length; i++) {
+      names.push(res[i].name);
+      deptID.push(res[i].id);
+    }
   })
 
-  
+
   inquirer.prompt([
     {
       type: 'input',
@@ -140,13 +142,21 @@ addRole =() => {
     {
       type: 'list',
       name: 'deptSelect',
+      message: 'What department is this role a part of?',
       choices: names
     }
   ]).then(answers => {
-    db.query(`INSERT INTO roles (title, salary, department_id) VALUES (${answers.inputTitle}, ${answers.inputSalary}, ${answers.deptSelect})`, (err, res) => {
-      if (err) throw err;
-      console.log(`You successfully added ${answer.title} and ${answer.inputSalary} to the database!`);
-      viewAllRoles();
-    })
+    id = [];
+    console.log(answers);
+    for (i = 0; i < names.length; i++) {
+      if (names[i] === answers.deptSelect) {
+        //console.log(deptID[i])
+        db.query(`INSERT INTO roles (title, salary, department_id) VALUES ('${answers.inputTitle}', '${answers.inputSalary}', '${deptID[i]}')`, (err, res) => {
+          if (err) throw err;
+          console.log(`You successfully added ${answers.title} and ${answers.inputSalary} to the database!`);
+          return viewAllRoles();
+        })
+      }
+    }
   })
 };
