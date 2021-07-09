@@ -55,7 +55,7 @@ function init() {
   })
 }
 
-function viewAllDepartments() {
+viewAllDepartments = () => {
   db.query('SELECT * FROM department', (err, res) => {
     if (err) {
       throw err;
@@ -65,7 +65,7 @@ function viewAllDepartments() {
   });
 };
 
-function viewAllRoles() {
+viewAllRoles = () => {
   db.query('SELECT * FROM roles', (err, res) => {
     if (err) {
       throw err;
@@ -75,7 +75,7 @@ function viewAllRoles() {
   });
 };
 
-function viewAllEmployees() {
+viewAllEmployees = () => {
   db.query('SELECT * FROM employee', (err, res) => {
     if (err) {
       throw err;
@@ -85,7 +85,7 @@ function viewAllEmployees() {
   });
 };
 
-function addDepartment() {
+addDepartment = () => {
 
   inquirer.prompt([
     {
@@ -96,7 +96,7 @@ function addDepartment() {
   ]).then(answer => {
     db.query(`INSERT INTO department (name) VALUES ('${answer.deptName}')`, (err, res) => {
       if (err) throw err;
-      console.log("1 new department added: " + answer.deptName);
+      console.log(`You successfully added ${answer.deptName} to the database!`);
       viewAllDepartments();
       init();
     })
@@ -115,4 +115,38 @@ function addDepartment() {
 //   })
 // };
 
+addRole =() => {
 
+  let names = [];
+  db.query(`SELECT * FROM department`, (err, res) => {
+    //console.log(res);
+    for(i = 0; i < res.length; i++){
+      names.push(res[i].name)
+    }  
+  })
+
+  
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'inputTitle',
+      message: 'What is the title of the new role?',
+    },
+    {
+      type: 'input',
+      name: 'inputSalary',
+      message: 'What is the salary of the new role?',
+    },
+    {
+      type: 'list',
+      name: 'deptSelect',
+      choices: names
+    }
+  ]).then(answers => {
+    db.query(`INSERT INTO roles (title, salary, department_id) VALUES (${answers.inputTitle}, ${answers.inputSalary}, ${answers.deptSelect})`, (err, res) => {
+      if (err) throw err;
+      console.log(`You successfully added ${answer.title} and ${answer.inputSalary} to the database!`);
+      viewAllRoles();
+    })
+  })
+};
