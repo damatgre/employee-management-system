@@ -51,6 +51,10 @@ function init() {
       case "Add a role":
         addRole();
         break;
+
+        case "Add an employee":
+        addEmployee();
+        break;
     }
   })
 }
@@ -146,9 +150,10 @@ addRole = () => {
       choices: names
     }
   ]).then(answers => {
-    id = [];
     console.log(answers);
+    //running through names array to get index
     for (i = 0; i < names.length; i++) {
+      //using index to get ID in ID array
       if (names[i] === answers.deptSelect) {
         //console.log(deptID[i])
         db.query(`INSERT INTO roles (title, salary, department_id) VALUES ('${answers.inputTitle}', '${answers.inputSalary}', '${deptID[i]}')`, (err, res) => {
@@ -160,3 +165,55 @@ addRole = () => {
     }
   })
 };
+
+addEmployee = () => {
+
+  roleTitle = [];
+  roleId = [];
+  db.query(`SELECT * FROM roles`,  (err, res) => {
+    //console.log(res);
+    for (i = 0; i < res.length; i++) {
+      roleTitle.push(res[i].title);
+      roleId.push(res[i].id);
+    }
+    console.log(roleTitle);
+    console.log(roleId);
+  })
+  
+  manager = [];
+  managerId = [];
+  db.query(`SELECT * FROM employee`, (err, res) => {
+    //console.log(res);
+    for (i = 0; i < res.length; i++) {
+      manager.push(res[i].first_name);
+      managerId.push(res[i].id);
+    }
+    console.log(manager);
+    console.log(managerId);
+  })
+
+  // inquirer.prompt([
+  //   {
+  //     type: 'input',
+  //     name: 'firstName',
+  //     message: 'What is the first name of the new employee?',
+  //   },
+  //   {
+  //     type: 'input',
+  //     name: 'lastName',
+  //     message: 'What is the last name of the new employee?',
+  //   },
+  //   {
+  //     type: 'list',
+  //     name: 'roleSelect',
+  //     message: 'What is the role of the new employee?',
+  //     choices: roleTitle
+  //   },
+  //   {
+  //     type: 'list',
+  //     name: 'managerSelect',
+  //     message: 'Who is the manager of the new employee?',
+  //     choices: names
+  //   }
+  // ])
+}
