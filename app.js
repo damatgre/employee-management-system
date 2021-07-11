@@ -191,65 +191,72 @@ getManagers = () => {
 
 addEmployee = () => {
 
-  getRoles();
-  getManagers();
+  //create empty arrays to fill with necessary data for questions
+  let managersArray = [];
+  let rolesArray = [];
 
-  let roleChoice = [];
-  let roleId = [];
-  for (i = 0; i < roles.length; i++) {
-    roleChoice.push(roles[i].title)
-    roleId.push(roles[i].id);
-  }
-
-  let managerChoice = [];
-  let managerId = [];
-  for (i = 0; i < managers.length; i++) {
-    managerChoice.push(managers[i].first_name)
-    managerId.push(managers[i].id);
-  }
-
-  inquirer.prompt([
-    {
-      type: 'input',
-      name: 'firstName',
-      message: 'What is the first name of the new employee?',
-    },
-    {
-      type: 'input',
-      name: 'lastName',
-      message: 'What is the last name of the new employee?',
-    },
-    {
-      type: 'list',
-      name: 'roleEmp',
-      message: 'What is the role of the new employee?',
-      choices: roleChoice
-    },
-    {
-      type: 'list',
-      name: 'managerEmp',
-      message: 'Who is the manager of the new employee?',
-      choices: managerChoice
+  //give all roles for answer choices
+  db.query("select * from roles;", function (err, res) {
+    // console.log({ res });
+    for (let i = 0; i < res.length; i++) {
+      //place information in new array for id and title. not two separate arrays.
+      rolesArray.push({ id: res[i].id, title: res[i].title });
     }
-  ]).then(answer => {
-    console.log(answer)
-    for (i = 0; i < roleChoice.length; i++) {
-      if (roleChoice[i] === answer.roleEmp) {
-        console.log(roleId[i])
+
+    //only going to give first and last name of managers
+    db.query("SELECT * FROM employee", function (err, val) {
+      for (let i = 0; i < val.length; i++) {
+        //id and name for managers
+        managersArray.push({ id: val[i].id, firstName: val[i].first_name });
       }
-    }
+      //console.log({ managers, roles });
 
-    for (i = 0; i < managerChoice.length; i++) {
-      if (managerChoice[i] === answer.managerEmp) {
-        console.log(managerId[i])
-      }
-    }
+      inquirer.prompt([
+        {
+          type: 'input',
+          name: 'firstName',
+          message: 'What is the first name of the new employee?',
+        },
+        {
+          type: 'input',
+          name: 'lastName',
+          message: 'What is the last name of the new employee?',
+        },
 
-    db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.firstName}', '${answer.lastName}', '${roleId[i]}', '${managerId[i]})`, (err, res) => {
+        //create new array to display role titles for choices
+        {
+          type: 'list',
+          name: 'role',
+          message: 'What is the role of the new employee?',
+          //mapping to title of role
+          choices: rolesArray.map(role => role.title)
+        },
 
-      console.log(`You successfully added ${answer.firstName} ${answer.lastName}`)
-      viewAllEmployees();
-    }
-    )
-  })
+        //create new array to display first name of managers
+        {
+          type: 'list',
+          name: 'manager',
+          message: 'Who is the manager of the new employee?',
+          choices: managersArray.map(manager => manager.firstName)
+        }
+      ]).then(answer => {
+        //console.log(answer)
+
+        //using indexOf() to get id for role_id and manager_id
+        let role_id = rolesArray.map(role => role.title).indexOf(answer.role);
+        console.log(role_id)
+        const manager_id = managersArray.find(manager => manager.firstName === answer.manager).id;
+        console.log(manager_id)
+
+        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.firstName}', '${answer.lastName}', '${role_id}', '${manager_id}');`, (err, res) => {
+          if (err) throw err;
+          console.log(`You successfully added ${answer.firstName} ${answer.lastName} to your database!`);
+          viewAllEmployees();
+          init();
+        }
+        )
+      })
+    })
+  }
+  )
 }
