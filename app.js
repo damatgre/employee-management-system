@@ -62,6 +62,10 @@ function init() {
       case "Add an employee":
         addEmployee();
         break;
+
+      case "Update an employee role":
+        updateEmployee();
+        break;
     }
   })
 }
@@ -196,7 +200,7 @@ addEmployee = () => {
   let rolesArray = [];
 
   //give all roles for answer choices
-  db.query("select * from roles;", function (err, res) {
+  db.query("SELECT * FROM roles;", (err, res) => {
     // console.log({ res });
     for (let i = 0; i < res.length; i++) {
       //place information in new array for id and title. not two separate arrays.
@@ -204,7 +208,7 @@ addEmployee = () => {
     }
 
     //only going to give first and last name of managers
-    db.query("SELECT * FROM employee", function (err, val) {
+    db.query("SELECT * FROM employee", (err, val) => {
       for (let i = 0; i < val.length; i++) {
         //id and name for managers
         managersArray.push({ id: val[i].id, firstName: val[i].first_name });
@@ -254,6 +258,66 @@ addEmployee = () => {
           console.log(`You successfully added ${answer.firstName} ${answer.lastName} to your database!`);
           viewAllEmployees();
           init();
+        }
+        )
+      })
+    })
+  }
+  )
+}
+
+updateEmployee = () => {
+
+  let employeeArray = [];
+  let rolesArray = [];
+  //employee array
+  db.query("SELECT * FROM employee", (err, val) => {
+    for (let i = 0; i < val.length; i++) {
+      employeeArray.push({ id: val[i].id, firstName: val[i].first_name });
+    }
+    //give all roles for answer choices
+    db.query("SELECT * FROM roles;", (err, res) => {
+      for (let i = 0; i < res.length; i++) {
+        rolesArray.push({ id: res[i].id, title: res[i].title });
+      }
+
+
+      //console.log({ employeeArray, rolesArray });
+
+      inquirer.prompt([
+
+        {
+          type: 'list',
+          name: 'employees',
+          message: 'Which employee would you like to update?',
+          choices: employeeArray.map(employee => employee.firstName)
+        },
+        //create new array to display role titles for choices  
+        {
+          type: 'list',
+          name: 'role',
+          message: 'What is the role of the new employee?',
+          //mapping to title of role
+          choices: rolesArray.map(role => role.title)
+        }
+
+
+      ]).then(answer => {
+        //console.log(answer)
+
+        //indexOf used new id so find works
+        const employee_id = employeeArray.find(employee => employee.firstName === answer.employees).id;
+        console.log(employee_id)
+        //using indexOf() to get id for role_id
+        let role_id = rolesArray.map(role => role.title).indexOf(answer.role);
+        console.log(role_id)
+
+
+        db.query("UPDATE employee SET role_id = ? WHERE id = ?;", [role_id, employee_id],
+         (err, res) => {
+            if (err) throw err
+            console.log(`You successfully update ${answer.employees}'s role!`)
+            viewAllEmployees()
         }
         )
       })
