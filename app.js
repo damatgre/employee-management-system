@@ -2,11 +2,6 @@ var inquirer = require('inquirer');
 const cTable = require('console.table');
 const db = require('./db/connection');
 
-let roles;
-let departments;
-let managers;
-let employees;
-
 
 // Start server after DB connection and begin prompts
 db.connect(err => {
