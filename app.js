@@ -242,9 +242,10 @@ addEmployee = () => {
       ]).then(answer => {
         //console.log(answer)
 
-        //using indexOf() to get id for role_id and manager_id
+        //using indexOf() to get id for role_id
         let role_id = rolesArray.map(role => role.title).indexOf(answer.role);
         console.log(role_id)
+        //indexOf used new id so find works
         const manager_id = managersArray.find(manager => manager.firstName === answer.manager).id;
         console.log(manager_id)
 
