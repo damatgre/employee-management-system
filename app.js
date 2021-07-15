@@ -108,22 +108,11 @@ addDepartment = () => {
       if (err) throw err;
       console.log(`You successfully added ${answer.deptName} to the database!`);
       viewAllDepartments();
-      init();
+      //init();
     })
   })
 };
-//     db.query(`INSERT INTO department SET ?`,
-//       {
-//         name: answer.deptName
-//       }, (err, res) => {
-//         if (err) {
-//           throw err;
-//         }
-//         console.log(`You successfully added ${answer.deptName} to the departments!`, res);
-//         init();
-//       });
-//   })
-// };
+
 
 addRole = () => {
 
@@ -165,7 +154,8 @@ addRole = () => {
         db.query(`INSERT INTO roles (title, salary, department_id) VALUES ('${answers.inputTitle}', '${answers.inputSalary}', '${deptID[i]}')`, (err, res) => {
           if (err) throw err;
           console.log(`You successfully added ${answers.title} and ${answers.inputSalary} to the database!`);
-          return viewAllRoles();
+          viewAllRoles();
+          //init();
         })
       }
     }
@@ -252,7 +242,7 @@ addEmployee = () => {
           if (err) throw err;
           console.log(`You successfully added ${answer.firstName} ${answer.lastName} to your database!`);
           viewAllEmployees();
-          init();
+          //init();
         }
         )
       })
@@ -312,7 +302,8 @@ updateEmployee = () => {
          (err, res) => {
             if (err) throw err
             console.log(`You successfully update ${answer.employees}'s role!`)
-            viewAllEmployees()
+            viewAllEmployees();
+            //init();
         }
         )
       })

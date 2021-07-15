@@ -20,8 +20,9 @@ Answer prompts to fill out information for Manager, Engineer(s), and Intern(s).
 
 ## Screenshot and Video
 
-![Screenshot of Team Builder](./assets/team-screenshot.png)
-
+![gif of view prompts](./assets/view.gif)
+![gif of add prompts](./assets/add.gif)
+![gif of update prompts](./assets/update.gif)
 
 ## Technology Used
 
@@ -32,4 +33,4 @@ Javascript - Used to base functionality of functions and prompts within the appl
 
 ## Contributors
 
-During the Rutgers Bootcamp, Kevin Ferguson, provided starter code. This project was also completed with the help of Reuben Genkin and Marykate Smith.
+This project was also completed with the help of Reuben Genkin and Marykate Smith.
