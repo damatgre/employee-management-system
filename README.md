@@ -5,9 +5,9 @@ This is a command-line application to manage a company's employee database, usin
 ## Installation
 
 1. npm i - to install all file in order for npm to work
-2. npm i inquirer - to use inquirer (to interact with the user via command line)
-3. npm init - to create a json file
-4. npm i mysql - to connect to MySql database
+2. npm init -y - to create a json file
+3. npm i inquirer - to use inquirer (to interact with the user via command line)
+4. npm i mysql2 - to connect to MySql database
 5. npm console.table - to format tables
 
 ## Usage
