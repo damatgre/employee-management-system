@@ -14,9 +14,9 @@ This is a command-line application to manage a company's employee database, usin
 
 Start application by typing node app.js into the command-line/terminal. 
 
-Follow along with prompts to select type of employee.
+Follow along with prompts to select the option you wish to execute.
 
-Answer prompts to fill out information for Manager, Engineer(s), and Intern(s).
+Once you have selected the prompt of your choosing, input your answer, and you will be directed back to the start menu.
 
 ## Screenshot and Video
 
